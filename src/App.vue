@@ -12,10 +12,10 @@
       <div class="content has-text-centered">
         <p>
           <strong>Skaitykla</strong> by
-          <a href="https://jgthms.com">Saulius Sirvydas</a>. <br />
+          <a href="https://github.com/sausir1">Saulius Sirvydas</a>. <br />
           <ion-icon name="logo-github" style="font-size: 56px"></ion-icon>
           <br />
-          <a href="">
+          <a href="https://github.com/sausir1/skaityk-front">
             <ion-icon name="logo-vue"></ion-icon> Front-end repository</a
           >
           <br />

@@ -9,14 +9,17 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <form-input
-            :has-error="errors.length > 0"
-            v-model="itemValue"
-            :type="type"
-            :placeholder="placeholder"
-            :disabled="disabled"
-            :loading="loading"
-          />
+          <div class="select">
+            <select v-model="itemValue" :disabled="disabled">
+              <option
+                v-for="option in options"
+                :key="option[0]"
+                :value="option[0]"
+              >
+                {{ option[1] }}
+              </option>
+            </select>
+          </div>
         </div>
         <transition name="fade">
           <p v-if="errors.length > 0" class="help is-danger absolute">
@@ -29,12 +32,11 @@
 </template>
 
 <script>
-import FormInput from "./FormInput.vue";
 export default {
   props: {
     initialValue: {
       type: [Array, String, Number],
-      default: "",
+      default: () => [[]],
     },
     name: {
       type: String,
@@ -44,27 +46,19 @@ export default {
       type: String,
       default: "",
     },
-    type: {
-      type: String,
-      default: "text",
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
     disabled: {
       type: Boolean,
       default: false,
     },
-  },
-  components: {
-    FormInput,
+    options: {
+      type: Array,
+      default: () => [[]],
+    },
   },
   data() {
     return {
       errors: "",
       itemValue: "",
-      loading: false,
     };
   },
   created() {
@@ -80,8 +74,6 @@ export default {
       this.itemValue = this.initialValue;
     });
     this.$formBus.$on(`set-${this.name}`, (value) => (this.itemValue = value));
-    this.$formBus.$on("submit-start", () => (this.loading = true));
-    this.$formBus.$on("submit-end", () => (this.loading = false));
   },
   watch: {
     itemValue: {

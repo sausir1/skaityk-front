@@ -8,7 +8,11 @@
     <form-item name="price" label="Price" />
     <form-item name="about" label="Description" />
     <form-item name="pages" label="Number of pages" />
-    <form-item name="category_id" label="Category" />
+    <form-item-select
+      name="category_id"
+      label="Category"
+      :options="categoryOptions"
+    />
   </api-form>
 </template>
 
@@ -27,6 +31,19 @@ export default {
     //   type: String,
     //   default: "authors/1/books",
     // },
+  },
+  data() {
+    return {
+      categoryOptions: [],
+    };
+  },
+  created() {
+    this.$axios.get("categories").then((res) => {
+      this.categoryOptions = res.data.map((category) => [
+        category.id,
+        category.name,
+      ]);
+    });
   },
   methods: {
     afterSubmit(bookData) {

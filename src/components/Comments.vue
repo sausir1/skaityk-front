@@ -13,7 +13,23 @@
             <br />
             {{ comment.comment }}
             <br />
-            <small>Created at · {{ comment.created_at }} </small>
+            <small>
+              <button
+                v-if="comment.author === userInfo.name"
+                @click="editComment(comment)"
+                class="button is-ghost is-small"
+              >
+                Edit
+              </button>
+              <button
+                v-if="comment.author === userInfo.name"
+                @click="removeComment(comment)"
+                class="button is-ghost is-small"
+              >
+                Delete
+              </button>
+              Created at · {{ comment.created_at }}
+            </small>
           </p>
         </div>
       </div>
@@ -57,10 +73,11 @@ export default {
     return {
       comments: [],
       commentInput: "",
+      commentId: null,
     };
   },
   computed: {
-    ...mapState(["can"]),
+    ...mapState(["can", "userInfo"]),
   },
   created() {
     this.$axios
@@ -69,12 +86,46 @@ export default {
   },
   methods: {
     addComment() {
+      if (this.commentId) {
+        return this.$axios
+          .put(`${this.endpoint}/${this.commentId}`, {
+            comment: this.commentInput,
+          })
+          .then((response) => {
+            const index = this.comments.findIndex(
+              (comment) => comment.id === this.commentId
+            );
+            this.$set(this.comments, index, response.data);
+            this.commentId = null;
+            this.commentInput = "";
+          });
+      }
       this.$axios
         .post(this.endpoint, { comment: this.commentInput })
         .then((response) => this.comments.push(response.data));
+      this.commentInput = "";
     },
     generateRandom() {
       return Math.floor(Math.random() * 100);
+    },
+    editComment(comment) {
+      this.commentInput = comment.comment;
+      this.commentId = comment.id;
+    },
+    removeComment(comment) {
+      this.$eventBus.confirm().then((answer) => {
+        if (answer) {
+          this.$axios.delete(`${this.endpoint}/${comment.id}`).then(() => {
+            this.$axios
+              .get(this.endpoint)
+              .then((response) => (this.comments = response.data));
+            this.$eventBus.$emit("notification-show", {
+              message: `Comment was deleted succesfully!`,
+              status: "success",
+            });
+          });
+        }
+      });
     },
   },
 };

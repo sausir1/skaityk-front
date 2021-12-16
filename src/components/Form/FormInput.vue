@@ -1,7 +1,7 @@
 <template>
   <input
     @input="$emit('input', $event.target.value)"
-    :class="{ input: true, 'is-danger': hasError }"
+    :class="{ input: true, 'is-danger': hasError, 'is-loading': loading }"
     :type="type"
     :value="inputValue"
     :placeholder="placeholder"
@@ -30,6 +30,10 @@ export default {
       default: "text",
     },
     hasError: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
       type: Boolean,
       default: false,
     },

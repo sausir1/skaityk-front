@@ -31,6 +31,7 @@
           :editClick="editBook"
           :removeClick="removeBook"
           :visit-click="visitBook"
+          :add-new-click="addBook"
         >
           <template #title="{ rowData }">
             {{ rowData.title }}
@@ -89,6 +90,19 @@ export default {
     },
     removeBook(book) {
       this.$eventBus.confirm().then((answer) => {
+        this.$axios
+          .delete(`authors/${this.$route.params.id}/books/${book.slug}`)
+          .then(() => {
+            this.$axios
+              .get(`authors/${this.$route.params.id}/books/`)
+              .then((res) => {
+                this.books = res.data;
+              });
+            this.$eventBus.$emit("notification-show", {
+              message: "Book was deleted succesfully!",
+              status: "success",
+            });
+          });
         console.log(answer, book);
       });
     },
@@ -96,6 +110,23 @@ export default {
       this.$router.push({
         name: "single-book",
         params: { id: this.author.id, sl: book.slug },
+      });
+    },
+    addBook() {
+      this.$eventBus.$emit("modal-open", {
+        component: BookEdit,
+        props: {
+          method: "POST",
+          endpoint: `authors/${this.$route.params.id}/books/`,
+          parent: this.random,
+        },
+      });
+      this.$eventBus.$on(`submitted-${this.random}`, () => {
+        this.$axios
+          .get(`authors/${this.$route.params.id}/books`)
+          .then((res) => {
+            this.books = res.data;
+          });
       });
     },
   },

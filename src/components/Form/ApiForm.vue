@@ -66,6 +66,13 @@ export default {
   },
   methods: {
     onSubmit() {
+      this.$formBus.$emit("submit-start");
+      const toSend = {};
+      Object.keys(this.form).forEach((key) => {
+        if (this.form[key] !== "") {
+          toSend[key] = this.form[key];
+        }
+      });
       this.$axios[this.method.toLowerCase()](this.endpoint, this.form)
         .then((response) => {
           this.$eventBus.$emit("notification-show", {
@@ -89,7 +96,8 @@ export default {
             status: "danger",
             message: this.errorMessage,
           });
-        });
+        })
+        .finally(() => this.$formBus.$emit("submit-end"));
     },
     onReset() {
       this.$formBus.$emit("reset-input");

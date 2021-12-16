@@ -13,9 +13,11 @@ import ApiForm from './components/Form/ApiForm.vue'
 import FormItem from './components/Form/FormItem.vue'
 // import GlobalNotification from './components/layout/GlobalNotification.vue'
 import DataTable from './components/layout/DataTable.vue'
+import FormItemSelect from './components/Form/FormitemSelect.vue'
 
 Vue.component('ApiForm', ApiForm)
 Vue.component('FormItem', FormItem)
+Vue.component('FormItemSelect', FormItemSelect)
 Vue.component('DataTable', DataTable)
 // Vue.component('GlobalNotification', GlobalNotification)
 
